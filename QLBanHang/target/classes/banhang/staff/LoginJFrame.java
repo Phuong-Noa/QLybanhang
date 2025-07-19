@@ -9,18 +9,22 @@ import banhang.dao.impl.UserDAOImpl;
 import banhang.entity.User;
 import banhang.util.XAuth;
 import banhang.util.XDialog;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author ADMIN
  */
-public class LoginJFrame extends javax.swing.JFrame implements LoginController{
+public class LoginJFrame extends javax.swing.JFrame implements LoginController {
 
     /**
      * Creates new form LoginJDialog
      */
     public LoginJFrame() {
         initComponents();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -224,15 +228,15 @@ public class LoginJFrame extends javax.swing.JFrame implements LoginController{
 
     @Override
     public void open() {
-        this.setLocationRelativeTo(null);   
-        
+        this.setLocationRelativeTo(null);
+
     }
 
     @Override
     public void login() {
         String username = txtUsername.getText();
-        String password = new String(pfPassword.getPassword());  
-        
+        String password = new String(pfPassword.getPassword());
+
         if (username.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập tên đăng nhập!", "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
@@ -242,8 +246,7 @@ public class LoginJFrame extends javax.swing.JFrame implements LoginController{
             JOptionPane.showMessageDialog(null, "Vui lòng nhập mật khẩu đăng nhập!", "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        
+
         UserDAO dao = new UserDAOImpl();
         User user = dao.findById(username);
         if (user == null) {
@@ -257,7 +260,7 @@ public class LoginJFrame extends javax.swing.JFrame implements LoginController{
             //XDialog.alert("🚫 Tài khoản của bạn đã bị vô hiệu hóa!");
         } else {
             XAuth.user = user;
-            
+
             String role = user.isManager() ? "Quản lý" : "Nhân viên";
             XDialog.alert("Đăng nhập thành công với quyền " + role + "!");
             this.dispose();

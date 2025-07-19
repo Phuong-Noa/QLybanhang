@@ -8,19 +8,22 @@ import banhang.dao.UserDAO;
 import banhang.dao.impl.UserDAOImpl;
 import banhang.util.XAuth;
 import banhang.util.XDialog;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author ADMIN
  */
-public class ChangePasswordJFrame extends javax.swing.JFrame implements ChangePasswordController{
+public class ChangePasswordJFrame extends javax.swing.JFrame implements ChangePasswordController {
 
     /**
      * Creates new form ChangePasswordJDialog
      */
     public ChangePasswordJFrame() {
         initComponents();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -253,10 +256,10 @@ public class ChangePasswordJFrame extends javax.swing.JFrame implements ChangePa
     // End of variables declaration//GEN-END:variables
 
     UserDAO dao = new UserDAOImpl();
-    
+
     @Override
     public void open() {
-        this.setLocationRelativeTo(null);  
+        this.setLocationRelativeTo(null);
     }
 
     @Override
@@ -264,50 +267,50 @@ public class ChangePasswordJFrame extends javax.swing.JFrame implements ChangePa
         String username = txtUsername.getText();
         String password = new String(pfPassword.getPassword());
         String newpass = new String(pfNewPassword.getPassword());
-        String confirm = new String(pfConfirmPassword.getPassword());   
-        
+        String confirm = new String(pfConfirmPassword.getPassword());
+
         // Kiểm tra thông tin nếu để trống
-        if(username.isEmpty()){
+        if (username.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập tên đăng nhập!", "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (password.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập mật khẩu hiện tại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (newpass.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập mật khẩu mới!", "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (confirm.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập xác nhận mật khẩu mới", "Thông báo", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         // Kiểm tra thông tin bị sai
         if (!username.equals(XAuth.user.getUsername())) {
             JOptionPane.showMessageDialog(null, "Sai tên đăng nhập!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         if (!password.equals(XAuth.user.getPassword())) {
             JOptionPane.showMessageDialog(null, "Sai mật khẩu hiện tại!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         if (!newpass.equals(confirm)) {
             JOptionPane.showMessageDialog(null, "Sai mật khẩu mới!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         if (!confirm.equals(confirm)) {
             JOptionPane.showMessageDialog(null, "Sai xác nhận mật khâu mới!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         // Nếu mọi thứ đều hợp lệ
         XAuth.user.setPassword(newpass);
         dao.update(XAuth.user);
@@ -321,7 +324,7 @@ public class ChangePasswordJFrame extends javax.swing.JFrame implements ChangePa
 
     @Override
     public void close() {
-        this.dispose();  
+        this.dispose();
     }
 
     @Override

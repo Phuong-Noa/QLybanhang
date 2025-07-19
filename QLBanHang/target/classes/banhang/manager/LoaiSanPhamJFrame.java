@@ -9,19 +9,22 @@ import banhang.dao.impl.LoaiSanPhamDAOImpl;
 import banhang.entity.LoaiSanPham;
 import banhang.util.XDialog;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author ADMIN
  */
-public class LoaiSanPhamJFrame extends javax.swing.JFrame implements LoaiSanPhamController{
+public class LoaiSanPhamJFrame extends javax.swing.JFrame implements LoaiSanPhamController {
 
     /**
      * Creates new form LoaiSanPhamJDialog
      */
     public LoaiSanPhamJFrame() {
         initComponents();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -348,7 +351,7 @@ public class LoaiSanPhamJFrame extends javax.swing.JFrame implements LoaiSanPham
 
     private void tblLSPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblLSPMouseClicked
         // TODO add your handling code here:
-            if (evt.getClickCount() == 2) {
+        if (evt.getClickCount() == 2) {
             this.edit();
         }
     }//GEN-LAST:event_tblLSPMouseClicked
@@ -508,7 +511,7 @@ public class LoaiSanPhamJFrame extends javax.swing.JFrame implements LoaiSanPham
             };
             model.addRow(rowData);
         });
-    }   
+    }
 
     @Override
     public void open() {
@@ -661,4 +664,3 @@ public class LoaiSanPhamJFrame extends javax.swing.JFrame implements LoaiSanPham
     }
 
 }
-

@@ -10,19 +10,23 @@ import banhang.entity.KhachHang;
 import banhang.util.XDate;
 import banhang.util.XDialog;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author ADMIN
  */
-public class KhachHangJFrame extends javax.swing.JFrame implements KhachHangController{
+public class KhachHangJFrame extends javax.swing.JFrame implements KhachHangController {
 
     /**
      * Creates new form KhachHangJDialog
      */
     public KhachHangJFrame() {
         initComponents();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -522,7 +526,7 @@ public class KhachHangJFrame extends javax.swing.JFrame implements KhachHangCont
 
     KhachHangDAO dao = new KhachHangDAOImpl();
     List<KhachHang> items = List.of();
-    
+
     @Override
     public void search() {
         String keyword = txtSearch.getText().trim();
@@ -696,7 +700,8 @@ public class KhachHangJFrame extends javax.swing.JFrame implements KhachHangCont
 
     @Override
     public void moveFirst() {
-this.moveTo(0);    }
+        this.moveTo(0);
+    }
 
     @Override
     public void movePrevious() {

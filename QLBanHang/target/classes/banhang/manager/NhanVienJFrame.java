@@ -11,22 +11,22 @@ import banhang.entity.NhanVien;
 import banhang.util.XDate;
 import banhang.util.XDialog;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
-
-
-
 
 /**
  *
  * @author ADMIN
  */
-public class NhanVienJFrame extends javax.swing.JFrame implements NhanVienController{
+public class NhanVienJFrame extends javax.swing.JFrame implements NhanVienController {
 
     /**
      * Creates new form NhanVienJDialog
      */
     public NhanVienJFrame() {
         initComponents();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -507,9 +507,7 @@ public class NhanVienJFrame extends javax.swing.JFrame implements NhanVienContro
 
     NhanVienDAO dao = new NhanVienDAOImpl();
     List<NhanVien> items = List.of();
-    
-    
-    
+
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
@@ -537,7 +535,7 @@ public class NhanVienJFrame extends javax.swing.JFrame implements NhanVienContro
         entity.setHoten(txtHoTen.getText());
         entity.setSodt(txtSDT.getText());
         entity.setNgvl(XDate.parse(txtNgVL.getText()));
-        return entity;    
+        return entity;
     }
 
     @Override
@@ -674,42 +672,42 @@ public class NhanVienJFrame extends javax.swing.JFrame implements NhanVienContro
 
     @Override
     public void search() {
-        String keyword = txtSearch.getText().trim();   
-    
-    if (keyword.isEmpty()) {
-        items = dao.findAll();
-    } else {
-        try {
-            int id = Integer.parseInt(keyword);
-            NhanVien nv = dao.findById(id);
-            if (nv != null) {
-                items = List.of(nv);
-            } else {
+        String keyword = txtSearch.getText().trim();
+
+        if (keyword.isEmpty()) {
+            items = dao.findAll();
+        } else {
+            try {
+                int id = Integer.parseInt(keyword);
+                NhanVien nv = dao.findById(id);
+                if (nv != null) {
+                    items = List.of(nv);
+                } else {
+                    items = dao.findByName(keyword);
+                }
+            } catch (NumberFormatException e) {
+                // Nếu không phải số => tìm theo tên
                 items = dao.findByName(keyword);
             }
-        } catch (NumberFormatException e) {
-            // Nếu không phải số => tìm theo tên
-            items = dao.findByName(keyword);
+
+            if (items == null || items.isEmpty()) {
+                XDialog.alert("Không tìm thấy nhân viên với mã hoặc tên: " + keyword);
+                return;
+            }
         }
 
-        if (items == null || items.isEmpty()) {
-            XDialog.alert("Không tìm thấy nhân viên với mã hoặc tên: " + keyword);
-            return;
-        }
-    }
-
-    DefaultTableModel model = (DefaultTableModel) tblStaff.getModel();
-    model.setRowCount(0); // Xoá dữ liệu cũ
-    items.forEach(item -> {
-        Object[] rowData = {
-            item.getManv(),
-            item.getHoten(),
-            item.getSodt(),
-            item.getNgvl(),
-            false
-        };
-        model.addRow(rowData);
-    });
+        DefaultTableModel model = (DefaultTableModel) tblStaff.getModel();
+        model.setRowCount(0); // Xoá dữ liệu cũ
+        items.forEach(item -> {
+            Object[] rowData = {
+                item.getManv(),
+                item.getHoten(),
+                item.getSodt(),
+                item.getNgvl(),
+                false
+            };
+            model.addRow(rowData);
+        });
     }
 
     @Override
@@ -725,4 +723,3 @@ public class NhanVienJFrame extends javax.swing.JFrame implements NhanVienContro
         });
     }
 }
-

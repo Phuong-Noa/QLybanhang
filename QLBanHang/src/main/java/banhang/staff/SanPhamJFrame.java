@@ -13,19 +13,22 @@ import banhang.entity.SanPham;
 import banhang.util.XDialog;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author ADMIN
  */
-public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamController{
+public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamController {
 
     /**
      * Creates new form SanPhamJDialog
      */
     public SanPhamJFrame() {
         initComponents();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -459,7 +462,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
 
     private void tblSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSanPhamMouseClicked
         // TODO add your handling code here:
-            if (evt.getClickCount() == 2) {
+        if (evt.getClickCount() == 2) {
             this.edit();
         }
     }//GEN-LAST:event_tblSanPhamMouseClicked
@@ -606,7 +609,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     SanPhamDAO dao = new SanPhamDAOImpl();
     List<SanPham> items = List.of();
     List<LoaiSanPham> loaisanpham = List.of();
-        
+
     @Override
     public void fillLoaiSanPham() {
         DefaultComboBoxModel cboModel = (DefaultComboBoxModel) cboLoaiSanPham.getModel();

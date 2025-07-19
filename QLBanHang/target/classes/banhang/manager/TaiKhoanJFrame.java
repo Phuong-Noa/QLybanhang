@@ -9,19 +9,22 @@ import banhang.dao.impl.TaiKhoanDAOImpl;
 import banhang.entity.TaiKhoan;
 import banhang.util.XDialog;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author ADMIN
  */
-public class TaiKhoanJFrame extends javax.swing.JFrame implements TaiKhoanController{
+public class TaiKhoanJFrame extends javax.swing.JFrame implements TaiKhoanController {
 
     /**
      * Creates new form UserJDialog
      */
     public TaiKhoanJFrame() {
         initComponents();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -427,7 +430,7 @@ public class TaiKhoanJFrame extends javax.swing.JFrame implements TaiKhoanContro
     private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
-        this.edit();
+            this.edit();
         }
     }//GEN-LAST:event_tblUserMouseClicked
 

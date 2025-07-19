@@ -6,11 +6,13 @@ package banhang.staff;
 
 import banhang.util.XAuth;
 import banhang.util.XIcon;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author ADMIN
  */
-public class BanHangJFrame extends javax.swing.JFrame implements BanHangController{
+public class BanHangJFrame extends javax.swing.JFrame implements BanHangController {
 
     /**
      * Creates new form BanHoaJFrame
@@ -18,6 +20,8 @@ public class BanHangJFrame extends javax.swing.JFrame implements BanHangControll
     public BanHangJFrame() {
         initComponents();
         this.init();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
+        setIconImage(icon.getImage());
     }
 
     /**
@@ -357,15 +361,15 @@ public class BanHangJFrame extends javax.swing.JFrame implements BanHangControll
 
     @Override
     public void init() {
-        this.setLocationRelativeTo(null); 
+        this.setLocationRelativeTo(null);
         //this.showLoginJDialog(this);
-        
+
         String role = XAuth.user.isManager() ? "Quản lý" : "Nhân viên";
         //lblFullname.setText("Xin chào: " + XAuth.user.getFullname() + "(" + role + ")");
         lblFullname.setText("Xin chào: " + XAuth.user.getFullname());
-         // Nếu không phải là quản lý thì ẩn các chức năng quản lý
-        if(!XAuth.user.isManager()){
-        pnlManager.setVisible(false);
-    }
+        // Nếu không phải là quản lý thì ẩn các chức năng quản lý
+        if (!XAuth.user.isManager()) {
+            pnlManager.setVisible(false);
+        }
     }
 }
