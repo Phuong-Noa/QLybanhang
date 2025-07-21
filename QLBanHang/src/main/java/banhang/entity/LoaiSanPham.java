@@ -20,6 +20,6 @@ public class LoaiSanPham {
     
     @Override
     public String toString() {
-        return this.tenloai;
+        return this.maloai;
     }
 }
