@@ -82,6 +82,7 @@ banhang\manager\TaiKhoanController.class
 banhang\staff\SanPhamJFrame.class
 banhang\staff\ChangePasswordController.class
 banhang\manager\TaiKhoanJFrame$6.class
+banhang\entity\SanPham$SanPhamBuilder.class
 banhang\util\XDate.class
 banhang\dao\impl\UserDAOImpl.class
 banhang\manager\NhanVienJFrame$17.class

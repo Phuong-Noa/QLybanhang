@@ -14,6 +14,7 @@ import banhang.util.XDialog;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,6 +28,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
      */
     public SanPhamJFrame() {
         initComponents();
+        init();
         ImageIcon icon = new ImageIcon(getClass().getResource("/banhang/icons/trump-small.png"));
         setIconImage(icon.getImage());
     }
@@ -61,9 +63,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         jLabel3 = new javax.swing.JLabel();
         txtTensp = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        txtDVT = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        txtNuocsx = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         txtGia = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
@@ -75,6 +75,8 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         btnDelete = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         cboLoaiSanPham = new javax.swing.JComboBox<>();
+        cboDVT = new javax.swing.JComboBox<>();
+        cboNuocSX = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("QUẢN LÝ SẢN PHẨM");
@@ -359,6 +361,10 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        cboDVT.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        cboNuocSX.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -377,9 +383,9 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                     .addComponent(cboLoaiSanPham, 0, 201, Short.MAX_VALUE)
                     .addComponent(txtMasp, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
                     .addComponent(txtTensp)
-                    .addComponent(txtDVT)
-                    .addComponent(txtNuocsx)
-                    .addComponent(txtGia))
+                    .addComponent(txtGia)
+                    .addComponent(cboDVT, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cboNuocSX, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(281, Short.MAX_VALUE))
@@ -400,11 +406,11 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(txtDVT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cboDVT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(20, 20, 20)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(txtNuocsx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cboNuocSX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
@@ -581,7 +587,9 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnUncheckAll;
     private javax.swing.JButton btnUpdate;
+    private javax.swing.JComboBox<String> cboDVT;
     private javax.swing.JComboBox<String> cboLoaiSanPham;
+    private javax.swing.JComboBox<String> cboNuocSX;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -598,10 +606,8 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblLoaiSanPham;
     private javax.swing.JTable tblSanPham;
-    private javax.swing.JTextField txtDVT;
     private javax.swing.JTextField txtGia;
     private javax.swing.JTextField txtMasp;
-    private javax.swing.JTextField txtNuocsx;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtTensp;
     // End of variables declaration//GEN-END:variables
@@ -609,6 +615,27 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     SanPhamDAO dao = new SanPhamDAOImpl();
     List<SanPham> items = List.of();
     List<LoaiSanPham> loaisanpham = List.of();
+
+    private String generateMaSPTheoLoai(String maLoai) {
+        List<SanPham> list = dao.findAll();
+        int max = 0;
+
+        for (SanPham sp : list) {
+            String maSP = sp.getMasp(); // VD: BB01
+            if (maSP != null && maSP.startsWith(maLoai)) {
+                try {
+                    int num = Integer.parseInt(maSP.substring(maLoai.length())); // lấy số sau BB
+                    if (num > max) {
+                        max = num;
+                    }
+                } catch (NumberFormatException e) {
+                    // bỏ qua nếu lỗi
+                }
+            }
+        }
+
+        return String.format("%s%02d", maLoai, max + 1); // VD: BB + 04 → BB04
+    }
 
     @Override
     public void fillLoaiSanPham() {
@@ -644,8 +671,8 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     public void setForm(SanPham entity) {
         txtMasp.setText(entity.getMasp());
         txtTensp.setText(entity.getTensp());
-        txtDVT.setText(entity.getDvt());
-        txtNuocsx.setText(entity.getNuocsx());
+        cboDVT.setSelectedItem(entity.getDvt());
+        cboNuocSX.setSelectedItem(entity.getNuocsx());
         //txtGia.setText(String.valueOf(entity.getGia()));
         txtGia.setText(String.valueOf(entity.getGia()));
         LoaiSanPham loai = loaisanpham.get(tblLoaiSanPham.getSelectedRow());
@@ -654,16 +681,27 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
 
     @Override
     public SanPham getForm() {
-        SanPham entity = new SanPham();
-        entity.setMasp(txtMasp.getText());
-        entity.setTensp(txtTensp.getText());
-        entity.setDvt(txtDVT.getText());
-        entity.setNuocsx(txtNuocsx.getText());
-        //entity.setGia(Double.parseDouble(txtGia.getText()));
-        entity.setGia(Double.parseDouble(txtGia.getText()));
-        LoaiSanPham loai = loaisanpham.get(cboLoaiSanPham.getSelectedIndex());
-        entity.setMaloai(loai.getMaloai());
-        return entity;
+        try {
+            String maSP = txtMasp.getText().trim();
+            String tenSP = txtTensp.getText().trim();
+            String donVi = cboDVT.getSelectedItem().toString();
+            String quocGia = cboNuocSX.getSelectedItem().toString();
+            double gia = Double.parseDouble(txtGia.getText().trim());
+            String loaiSP = cboLoaiSanPham.getSelectedItem().toString();
+
+            return SanPham.builder()
+                    .masp(maSP)
+                    .tensp(tenSP)
+                    .dvt(donVi)
+                    .nuocsx(quocGia)
+                    .gia(gia)
+                    .maloai(loaiSP)
+                    .build();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Dữ liệu không hợp lệ!");
+            return null;
+        }
     }
 
     @Override
@@ -693,53 +731,90 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         this.setEditable(true);
     }
 
-    @Override
     public void create() {
+        if (!validateForm()) {
+            return; // Dừng lại nếu dữ liệu không hợp lệ
+        }
+
         SanPham entity = this.getForm();
-        dao.create(entity);
-        // Lấy mã loại hiện tại để hiển thị lại đúng loại
-        String maloai = entity.getMaloai();
-        this.fillSanPhamTheoLoai();
-        this.clear();
+        if (entity == null) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ form.");
+            return;
+        }
+
+        try {
+            dao.create(entity);
+            JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
+            this.fillSanPhamTheoLoai();  // Làm mới bảng
+            this.clear();            // Xóa form
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi thêm sản phẩm: " + e.getMessage());
+        }
+
     }
 
     @Override
     public void update() {
-        SanPham entity = this.getForm();
-        dao.update(entity);
-        // Lấy mã loại hiện tại để hiển thị lại đúng loại
-        String maloai = entity.getMaloai();
-        this.fillSanPhamTheoLoai();
+        try {
+            SanPham sp = getForm();
+            dao.update(sp);
+            fillToTable();
+            JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thành công!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override
     public void delete() {
-        if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
-            String id = txtMasp.getText();
-            dao.deleteById(id);
-            // Xác định loại đang chọn ở bảng loại sản phẩm
-            int selectedRow = tblLoaiSanPham.getSelectedRow();
-            if (selectedRow >= 0) {
-                String maloai = loaisanpham.get(selectedRow).getMaloai();
-                this.fillSanPhamTheoLoai();
-            } else {
-                fillToTable(); // fallback: nếu không chọn loại nào thì load tất cả
-            }
+        int rowIndex = tblSanPham.getSelectedRow();
+        if (rowIndex < 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trong bảng để xóa!");
+            return;
+        }
 
-            this.clear();
+        String id = (String) tblSanPham.getValueAt(rowIndex, 0); // Lấy mã sản phẩm từ bảng
+
+        if (!XDialog.confirm("Bạn thực sự muốn xóa sản phẩm này?")) {
+            return;
+        }
+
+        try {
+            dao.deleteById(id); // Xóa trong CSDL
+
+            // Xóa dòng khỏi bảng
+            DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
+            model.removeRow(rowIndex);
+
+            this.clear(); // Xóa form nhập liệu
+            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi xóa sản phẩm: " + e.getMessage(),"Lỗi",JOptionPane.ERROR_MESSAGE);
         }
     }
 
     @Override
     public void clear() {
-        this.setForm(new SanPham());
-        this.setEditable(false);
+        SanPham sp = new SanPham();
+
+        // Lấy mã loại hiện tại từ combobox
+        Object selectedItem = cboLoaiSanPham.getSelectedItem();
+        if (selectedItem instanceof LoaiSanPham) {
+            String maLoai = ((LoaiSanPham) selectedItem).getMaloai();
+            sp.setMasp(generateMaSPTheoLoai(maLoai)); // Sinh mã dựa theo loại
+            sp.setMaloai(maLoai); // Gán lại mã loại
+        }
+
+        this.setForm(sp);
+        this.setEditable(true);
     }
 
     @Override
     public void setEditable(boolean editable) {
         txtMasp.setEnabled(!editable);
-        btnCreate.setEnabled(!editable);
+        btnCreate.setEnabled(editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
 
@@ -839,6 +914,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                 });
             }
             this.clear(); // reset form
+            txtMasp.setText(generateMaSPTheoLoai(maloai));
         }
     }
 
@@ -879,4 +955,68 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
             });
         }
     }
+
+    private void init() {
+        String[] dvt = {"cay", "hop", "quyen", "chuc", "hop", "cai"};
+        DefaultComboBoxModel<String> modelDVT = new DefaultComboBoxModel<>(dvt);
+        cboDVT.setModel(modelDVT);
+
+        String[] nuocSX = {"Singapore", "Viet Nam", "Trung Quoc", "Thai Lan"};
+        DefaultComboBoxModel<String> modelNuoc = new DefaultComboBoxModel<>(nuocSX);
+        cboNuocSX.setModel(modelNuoc);
+    }
+
+    private boolean validateForm() {
+        if (txtMasp.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mã sản phẩm không được để trống.");
+            txtMasp.requestFocus();
+            return false;
+        }
+
+        if (txtTensp.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tên sản phẩm không được để trống.");
+            txtTensp.requestFocus();
+            return false;
+        }
+
+        if (txtGia.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Giá không được để trống.");
+            txtGia.requestFocus();
+            return false;
+        }
+
+        try {
+            double gia = Double.parseDouble(txtGia.getText().trim());
+            if (gia <= 0) {
+                JOptionPane.showMessageDialog(this, "Giá phải lớn hơn 0.");
+                txtGia.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Giá phải là số.");
+            txtGia.requestFocus();
+            return false;
+        }
+
+        if (cboDVT.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn đơn vị tính.");
+            cboDVT.requestFocus();
+            return false;
+        }
+
+        if (cboNuocSX.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn nước sản xuất.");
+            cboNuocSX.requestFocus();
+            return false;
+        }
+
+        if (cboLoaiSanPham.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn loại sản phẩm.");
+            cboLoaiSanPham.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
 }
