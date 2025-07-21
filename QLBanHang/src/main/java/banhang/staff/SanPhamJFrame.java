@@ -369,7 +369,11 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         cboNuocSX.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         cboLoaiSanpham.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cboLoaiSanpham.setEnabled(false);
+        cboLoaiSanpham.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboLoaiSanphamActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -544,6 +548,11 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         this.search();
     }//GEN-LAST:event_btnSearchActionPerformed
 
+    private void cboLoaiSanphamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboLoaiSanphamActionPerformed
+        // TODO add your handling code here:
+        setMaSanPhamTuDong();
+    }//GEN-LAST:event_cboLoaiSanphamActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -622,6 +631,31 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     List<SanPham> items = List.of();
     List<LoaiSanPham> loaisanpham = List.of();
 
+    private void setMaSanPhamTuDong(){
+        LoaiSanPham loai = (LoaiSanPham) cboLoaiSanpham.getSelectedItem();
+        if (loai == null) return;
+        
+        String maloai = loai.getMaloai();
+        SanPhamDAO dao = new SanPhamDAOImpl();
+        List<SanPham> list = dao.findAll();
+        
+        int max = 0;
+        for (SanPham sp : list){
+            if (sp.getMasp().startsWith(maloai)){
+                try {
+                    String so = sp.getMasp().substring(maloai.length());
+                    int n = Integer.parseInt(so);
+                    if (n > max) max = n;
+                } catch (Exception e) {
+                    //ignore sai format
+                }
+            }
+        }
+        
+        String newMa = String.format("%s%02d", maloai, max + 1);
+        txtMasp.setText(newMa);
+    }
+    
     private String generateMaSPTheoLoai(String maLoai) {
         List<SanPham> list = dao.findAll();
         int max = 0;

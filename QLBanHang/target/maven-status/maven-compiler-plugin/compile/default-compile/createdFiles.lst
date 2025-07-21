@@ -122,6 +122,7 @@ banhang\staff\ChangePasswordJFrame$3.class
 banhang\dao\SanPhamDAO.class
 banhang\staff\BanHangJFrame$4.class
 banhang\dao\impl\LoaiSanPhamDAOImpl.class
+banhang\staff\SanPhamJFrame$19.class
 banhang\dao\LoaiSanPhamDAO.class
 banhang\staff\LoginJFrame$5.class
 banhang\util\XJdbc.class
