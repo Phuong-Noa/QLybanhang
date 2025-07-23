@@ -14,20 +14,19 @@ import java.util.List;
  *
  * @author ADMIN
  */
-public class SanPhamDAOImpl implements SanPhamDAO{
-    
-    private final String createSql = "INSERT INTO SANPHAM(MASP, TENSP, DVT, NUOCSX, GIA , MALOAI) VALUES(?, ?, ?, ?, ?, ?)";
+public class SanPhamDAOImpl implements SanPhamDAO {
+
+    private final String createSql = "INSERT INTO SANPHAM( TENSP, DVT, NUOCSX, GIA , MALOAI) VALUES( ?, ?, ?, ?, ?)";
     private final String updateSql = "UPDATE SANPHAM SET TENSP=?, DVT=?, NUOCSX=?, GIA=?, MALOAI=? WHERE MASP=?";
     private final String deleteByIdSql = "DELETE FROM SANPHAM WHERE MASP=?";
     private final String findAllSql = "SELECT * FROM SANPHAM";
     private final String findByIdSql = "SELECT * FROM SANPHAM WHERE MASP=?";
     private final String findByMaLoaiSql = "SELECT * FROM SANPHAM WHERE MALOAI=?";
     private final String findByNameSql = "SELECT * FROM SANPHAM WHERE MASP LIKE ? OR TENSP LIKE ?";
-    
+
     @Override
     public SanPham create(SanPham entity) {
         Object[] values = {
-            entity.getMasp(),
             entity.getTensp(),
             entity.getDvt(),
             entity.getNuocsx(),
@@ -53,18 +52,8 @@ public class SanPhamDAOImpl implements SanPhamDAO{
     }
 
     @Override
-    public void deleteById(String id) {
-        XJdbc.executeUpdate(deleteByIdSql, id);
-    }
-
-    @Override
     public List<SanPham> findAll() {
         return XQuery.getBeanList(SanPham.class, findAllSql);
-    }
-
-    @Override
-    public SanPham findById(String id) {
-        return XQuery.getSingleBean(SanPham.class, findByIdSql, id);
     }
 
     @Override
@@ -75,5 +64,15 @@ public class SanPhamDAOImpl implements SanPhamDAO{
     @Override
     public List<SanPham> findByName(String keyword) {
         return XQuery.getBeanList(SanPham.class, findByNameSql, "%" + keyword + "%", "%" + keyword + "%");
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        XJdbc.executeUpdate(deleteByIdSql, id);
+    }
+
+    @Override
+    public SanPham findById(Integer id) {
+        return XQuery.getSingleBean(SanPham.class, findByIdSql, id);
     }
 }

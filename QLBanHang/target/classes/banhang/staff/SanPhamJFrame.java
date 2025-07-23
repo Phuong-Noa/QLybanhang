@@ -369,6 +369,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         cboNuocSX.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         cboLoaiSanpham.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboLoaiSanpham.setEnabled(false);
         cboLoaiSanpham.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboLoaiSanphamActionPerformed(evt);
@@ -477,9 +478,31 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     }//GEN-LAST:event_formWindowOpened
 
     private void tblSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSanPhamMouseClicked
-        // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-            this.edit();
+        int row = tblSanPham.getSelectedRow();
+        if (row >= 0) {
+            txtMasp.setText(tblSanPham.getValueAt(row, 0).toString()); // cột 0 phải là maSP
+        }
+
+        // Gán dữ liệu lên form
+        txtMasp.setText(tblSanPham.getValueAt(row, 0).toString()); // Cột 0 phải là mã sản phẩm        
+        txtTensp.setText(tblSanPham.getValueAt(row, 1).toString());
+
+        // Đơn vị tính là ComboBox
+        String dvt = tblSanPham.getValueAt(row, 2).toString();
+        cboDVT.setSelectedItem(dvt); // chọn đúng đơn vị trong combo
+
+        String nuoc = tblSanPham.getValueAt(row, 3).toString();
+        cboNuocSX.setSelectedItem(nuoc);
+
+        txtGia.setText(tblSanPham.getValueAt(row, 4).toString());
+        // Mã loại → chọn lại trong ComboBox cboLoaiSanpham
+        String maLoai = tblSanPham.getValueAt(row, 5).toString();
+        for (int i = 0; i < cboLoaiSanpham.getItemCount(); i++) {
+            Object obj = cboLoaiSanpham.getItemAt(i);
+            if (obj instanceof LoaiSanPham loai && loai.getMaloai().equals(maLoai)) {
+                cboLoaiSanpham.setSelectedIndex(i);
+                break;
+            }
         }
     }//GEN-LAST:event_tblSanPhamMouseClicked
 
@@ -549,8 +572,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void cboLoaiSanphamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboLoaiSanphamActionPerformed
-        // TODO add your handling code here:
-        setMaSanPhamTuDong();
+
     }//GEN-LAST:event_cboLoaiSanphamActionPerformed
 
     /**
@@ -631,50 +653,18 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     List<SanPham> items = List.of();
     List<LoaiSanPham> loaisanpham = List.of();
 
-    private void setMaSanPhamTuDong(){
-        LoaiSanPham loai = (LoaiSanPham) cboLoaiSanpham.getSelectedItem();
-        if (loai == null) return;
-        
-        String maloai = loai.getMaloai();
-        SanPhamDAO dao = new SanPhamDAOImpl();
-        List<SanPham> list = dao.findAll();
-        
-        int max = 0;
-        for (SanPham sp : list){
-            if (sp.getMasp().startsWith(maloai)){
-                try {
-                    String so = sp.getMasp().substring(maloai.length());
-                    int n = Integer.parseInt(so);
-                    if (n > max) max = n;
-                } catch (Exception e) {
-                    //ignore sai format
-                }
-            }
-        }
-        
-        String newMa = String.format("%s%02d", maloai, max + 1);
-        txtMasp.setText(newMa);
-    }
-    
-    private String generateMaSPTheoLoai(String maLoai) {
-        List<SanPham> list = dao.findAll();
+    public int generateNewMaSP() {
+        int rowCount = tblSanPham.getRowCount();
         int max = 0;
 
-        for (SanPham sp : list) {
-            String maSP = sp.getMasp(); // VD: BB01
-            if (maSP != null && maSP.startsWith(maLoai)) {
-                try {
-                    int num = Integer.parseInt(maSP.substring(maLoai.length())); // lấy số sau BB
-                    if (num > max) {
-                        max = num;
-                    }
-                } catch (NumberFormatException e) {
-                    // bỏ qua nếu lỗi
-                }
+        for (int i = 0; i < rowCount; i++) {
+            int masp = Integer.parseInt(tblSanPham.getValueAt(i, 0).toString());
+            if (masp > max) {
+                max = masp;
             }
         }
 
-        return String.format("%s%02d", maLoai, max + 1); // VD: BB + 04 → BB04
+        return max + 1;
     }
 
     @Override
@@ -696,21 +686,21 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         if (!loaisanpham.isEmpty()) {
             tblLoaiSanPham.setRowSelectionInterval(0, 0);
             String maloai = loaisanpham.get(0).getMaloai();
-            this.fillSanPhamTheoLoai();; // => load bảng tblSanPham theo loại
+            this.fillSanPhamTheoLoai(); // => load bảng tblSanPham theo loại
         }
     }
 
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
-        this.fillLoaiSanPham();     
-        this.fillSanPhamTheoLoai(); 
+        this.fillLoaiSanPham();
+        this.fillSanPhamTheoLoai();
         this.clear();
     }
 
     @Override
     public void setForm(SanPham entity) {
-        txtMasp.setText(entity.getMasp());
+        txtMasp.setText(String.valueOf(entity.getMasp()));
         txtTensp.setText(entity.getTensp());
         cboDVT.setSelectedItem(entity.getDvt());
         cboNuocSX.setSelectedItem(entity.getNuocsx());
@@ -723,7 +713,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     @Override
     public SanPham getForm() {
         try {
-            String maSP = txtMasp.getText().trim();
+            int maSP = Integer.parseInt(txtMasp.getText().trim());
             String tenSP = txtTensp.getText().trim();
             String donVi = cboDVT.getSelectedItem().toString();
             String quocGia = cboNuocSX.getSelectedItem().toString();
@@ -751,9 +741,10 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         model.setRowCount(0);
 
         items = dao.findAll();
-        items.forEach(item -> {
+
+        for (SanPham item : items) {
             Object[] rowData = {
-                item.getMasp(),
+                item.getMasp(), // <-- Đây mới là mã sản phẩm đúng
                 item.getTensp(),
                 item.getDvt(),
                 item.getNuocsx(),
@@ -762,7 +753,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                 false
             };
             model.addRow(rowData);
-        });
+        }
     }
 
     @Override
@@ -822,7 +813,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         }
 
         try {
-            dao.deleteById(id); // Xóa trong CSDL
+            dao.deleteById(Integer.parseInt(id)); // Xóa trong CSDL
 
             // Xóa dòng khỏi bảng
             DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
@@ -844,7 +835,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         Object selectedItem = cboLoaiSanpham.getSelectedItem();
         if (selectedItem instanceof LoaiSanPham) {
             String maLoai = ((LoaiSanPham) selectedItem).getMaloai();
-            sp.setMasp(generateMaSPTheoLoai(maLoai)); // Sinh mã dựa theo loại
+            sp.setMasp(generateNewMaSP());
             sp.setMaloai(maLoai); // Gán lại mã loại
         }
 
@@ -889,7 +880,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
             }
 
             for (String masp : maspsToDelete) {
-                dao.deleteById(masp);
+                dao.deleteById(Integer.parseInt(masp));
             }
 
             // Cập nhật lại bảng
@@ -906,7 +897,6 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     }
 
     @Override
-
     public void moveFirst() {
         this.moveTo(0);
     }
@@ -937,6 +927,16 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
             tblSanPham.setRowSelectionInterval(index, index);
             this.edit();
         }
+        if (index >= 0 && index < tblSanPham.getRowCount()) {
+            tblSanPham.setRowSelectionInterval(index, index); // chọn dòng
+
+            String maSP = tblSanPham.getValueAt(index, 0).toString();
+            SanPham sp = dao.findById(Integer.parseInt(maSP));
+
+            if (sp != null) {
+                setForm(sp); // show thông tin lên form
+            }
+        }
     }
 
     private void setCheckedAll(boolean checked) {
@@ -955,9 +955,10 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
             model.setRowCount(0);
 
             items = dao.findByMaLoai(maloai); // DAO đã có sẵn hàm này
+            int stt = 1;
             for (SanPham item : items) {
                 model.addRow(new Object[]{
-                    item.getMasp(),
+                    stt++, // STT bắt đầu từ 1
                     item.getTensp(),
                     item.getDvt(),
                     item.getNuocsx(),
@@ -967,7 +968,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                 });
             }
             this.clear(); // reset form
-            txtMasp.setText(generateMaSPTheoLoai(maloai));
+            // txtMasp.setText(generateMaSPTheoLoai(maloai));
         }
     }
 
@@ -983,7 +984,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
             return;
         }
 
-        SanPham sp = dao.findById(keyword);
+        SanPham sp = dao.findById(Integer.parseInt(keyword));
         if (sp != null) {
             items = List.of(sp);
         } else {
@@ -1010,7 +1011,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     }
 
     private void init() {
-        String [] dvt = {"cay", "hop", "quyen", "chuc", "hop", "cai"};
+        String[] dvt = {"cay", "hop", "quyen", "chuc", "hop", "cai"};
         DefaultComboBoxModel<String> modelDVT = new DefaultComboBoxModel<>(dvt);
         cboDVT.setModel(modelDVT);
 

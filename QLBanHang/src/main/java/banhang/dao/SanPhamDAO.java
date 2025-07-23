@@ -11,7 +11,7 @@ import banhang.entity.SanPham;
  *
  * @author ADMIN
  */
-public interface SanPhamDAO extends CrudDAO<SanPham, String>{
+public interface SanPhamDAO extends CrudDAO<SanPham, Integer>{
     List<SanPham> findByMaLoai(String maloai);
     List<SanPham> findByName(String keyword);
 }

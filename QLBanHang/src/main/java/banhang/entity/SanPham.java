@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class SanPham {
-    private String masp;
+    private int masp;
     private String tensp;
     private String dvt;
     private String nuocsx;
