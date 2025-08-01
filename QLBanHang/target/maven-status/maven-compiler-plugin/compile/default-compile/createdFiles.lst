@@ -13,6 +13,7 @@ banhang\staff\KhachHangJFrame$10.class
 banhang\staff\SanPhamJFrame$12.class
 banhang\staff\SanPhamJFrame$1.class
 banhang\staff\LoginJFrame$1.class
+banhang\dao\EmailSenderDAO.class
 banhang\manager\NhanVienJFrame.class
 banhang\manager\LoaiSanPhamJFrame$4.class
 banhang\manager\TaiKhoanJFrame$3.class
@@ -31,12 +32,14 @@ banhang\staff\BanHangJFrame$5.class
 banhang\manager\TaiKhoanJFrame$9.class
 banhang\staff\KhachHangJFrame$9.class
 banhang\manager\NhanVienJFrame$9.class
+banhang\entity\EmailSender$EmailSenderBuilder.class
 banhang\util\XAuth.class
 banhang\entity\LoaiSanPham.class
 banhang\manager\NhanVienJFrame$15.class
 banhang\staff\ChangePasswordJFrame$1.class
 banhang\manager\TaiKhoanJFrame$8.class
 banhang\staff\KhachHangJFrame.class
+EmailsenderDAO.class
 banhang\staff\SanPhamJFrame$13.class
 banhang\manager\LoaiSanPhamJFrame$8.class
 banhang\entity\NhanVien.class
@@ -52,6 +55,7 @@ banhang\staff\SanPhamJFrame$10.class
 banhang\staff\SanPhamJFrame$8.class
 banhang\dao\impl\NhanVienDAOImpl.class
 banhang\manager\LoaiSanPhamController.class
+banhang\manager\QMatkhauController.class
 banhang\manager\LoaiSanPhamJFrame$15.class
 banhang\manager\TaiKhoanJFrame$14.class
 banhang\staff\LoginJFrame$2.class
@@ -88,6 +92,8 @@ banhang\dao\impl\UserDAOImpl.class
 banhang\manager\NhanVienJFrame$17.class
 banhang\manager\LoaiSanPhamJFrame$1.class
 banhang\manager\TaiKhoanJFrame$11.class
+banhang\entity\EmailSender.class
+banhang\dao\impl\EmailsenderDAOImpl.class
 banhang\staff\LoginJFrame$3.class
 banhang\manager\LoaiSanPhamJFrame$7.class
 banhang\staff\BanHangJFrame.class
@@ -106,6 +112,7 @@ banhang\manager\LoaiSanPhamJFrame$10.class
 banhang\entity\User$UserBuilder.class
 banhang\manager\NhanVienController.class
 banhang\manager\LoaiSanPhamJFrame$2.class
+banhang\manager\QMatkhau.class
 banhang\manager\TaiKhoanJFrame$4.class
 banhang\staff\SanPhamController.class
 banhang\manager\TaiKhoanJFrame$12.class
@@ -137,6 +144,7 @@ banhang\manager\LoaiSanPhamJFrame$3.class
 banhang\staff\SanPhamJFrame$2.class
 banhang\staff\KhachHangJFrame$5.class
 banhang\staff\SanPhamJFrame$18.class
+banhang\manager\QMatkhau$1.class
 banhang\staff\KhachHangJFrame$15.class
 banhang\staff\ChangePasswordJFrame$5.class
 banhang\entity\KhachHang$KhachHangBuilder.class
@@ -151,3 +159,5 @@ banhang\dao\TaiKhoanDAO.class
 banhang\manager\TaiKhoanJFrame$5.class
 banhang\manager\CrudController.class
 banhang\staff\KhachHangJFrame$6.class
+banhang\manager\QMatkhau$2$1.class
+banhang\manager\QMatkhau$2.class

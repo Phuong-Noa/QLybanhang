@@ -11,6 +11,7 @@ import banhang.dao.impl.SanPhamDAOImpl;
 import banhang.entity.LoaiSanPham;
 import banhang.entity.SanPham;
 import banhang.util.XDialog;
+import java.awt.JobAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -23,6 +24,8 @@ import javax.swing.table.DefaultTableModel;
  * @author ADMIN
  */
 public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamController {
+
+    private List<SanPham> sanphams = new ArrayList<>();
 
     /**
      * Creates new form SanPhamJDialog
@@ -482,9 +485,6 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
         if (row >= 0) {
             txtMasp.setText(tblSanPham.getValueAt(row, 0).toString()); // cột 0 phải là maSP
         }
-
-        // Gán dữ liệu lên form
-        txtMasp.setText(tblSanPham.getValueAt(row, 0).toString()); // Cột 0 phải là mã sản phẩm        
         txtTensp.setText(tblSanPham.getValueAt(row, 1).toString());
 
         // Đơn vị tính là ComboBox
@@ -648,7 +648,6 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtTensp;
     // End of variables declaration//GEN-END:variables
-
     SanPhamDAO dao = new SanPhamDAOImpl();
     List<SanPham> items = List.of();
     List<LoaiSanPham> loaisanpham = List.of();
@@ -663,7 +662,6 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                 max = masp;
             }
         }
-
         return max + 1;
     }
 
@@ -737,14 +735,14 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
 
     @Override
     public void fillToTable() {
+        sanphams = dao.findAll(); // hoặc dao.findByLoai(maloai) nếu muốn lọc theo loại
+
         DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
         model.setRowCount(0);
 
-        items = dao.findAll();
-
-        for (SanPham item : items) {
+        for (SanPham item : sanphams) {
             Object[] rowData = {
-                item.getMasp(), // <-- Đây mới là mã sản phẩm đúng
+                item.getMasp(),
                 item.getTensp(),
                 item.getDvt(),
                 item.getNuocsx(),
@@ -781,52 +779,67 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
             this.clear();            // Xóa form
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi khi thêm sản phẩm: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Lỗi khi thêm sản phẩm: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
     @Override
     public void update() {
+        int row = tblSanPham.getSelectedRow();
+        if (row < 0) {
+            XDialog.alert("Vui lòng chọn sản phẩm để cập nhật.");
+            return;
+        }
+
+        SanPham entity = getForm();  // Lấy dữ liệu từ form
+        if (entity == null) {
+            return;
+        }
+        if (sanphams == null || row >= sanphams.size()) {
+            XDialog.alert("Dữ liệu sản phẩm chưa được tải hoặc bị lỗi.");
+            return;
+        }
+        entity.setMasp(sanphams.get(row).getMasp()); // Lấy mã đúng từ danh sách
+
         try {
-            SanPham sp = getForm();
-            dao.update(sp);
-            fillToTable();
-            JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thành công!");
+            if (entity.getTensp().isEmpty() || entity.getDvt().isEmpty() || entity.getNuocsx().isEmpty()) {
+                XDialog.alert("Vui lòng nhập đầy đủ thông tin sản phẩm.");
+                return;
+            }
+            if (entity.getGia() <= 0) {
+                XDialog.alert("Giá sản phẩm phải lớn hơn 0.");
+                return;
+            }
+
+            dao.update(entity);
+            fillSanPhamTheoLoai();
+            XDialog.alert("Cập nhật sản phẩm thành công!");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            XDialog.alert("Cập nhật sản phẩm thất bại.");
         }
     }
 
     @Override
     public void delete() {
-        int rowIndex = tblSanPham.getSelectedRow();
-        if (rowIndex < 0) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trong bảng để xóa!");
+        int row = tblSanPham.getSelectedRow();
+        if (row < 0) {
+            XDialog.alert("Vui lòng chọn sản phẩm để xóa.");
             return;
         }
 
-        String id = (String) tblSanPham.getValueAt(rowIndex, 0); // Lấy mã sản phẩm từ bảng
+        if (XDialog.confirm("Bạn thực sự muốn xóa sản phẩm này?")) {
+            try {
+                int masp = sanphams.get(row).getMasp(); // Lấy đúng sản phẩm từ danh sách
+                dao.deleteById(masp);
 
-        if (!XDialog.confirm("Bạn thực sự muốn xóa sản phẩm này?")) {
-            return;
-        }
-
-        try {
-            dao.deleteById(Integer.parseInt(id)); // Xóa trong CSDL
-
-            // Xóa dòng khỏi bảng
-            DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
-            model.removeRow(rowIndex);
-
-            this.clear(); // Xóa form nhập liệu
-            JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi khi xóa sản phẩm: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                fillSanPhamTheoLoai(); // hoặc fillToTable()
+                XDialog.alert("Xóa sản phẩm thành công!");
+            } catch (Exception e) {
+                XDialog.alert("Xóa sản phẩm thất bại.");
+            }
         }
     }
-
     @Override
     public void clear() {
         SanPham sp = new SanPham();
@@ -869,21 +882,28 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
 
     @Override
     public void deleteCheckedItems() {
-        if (XDialog.confirm("Bạn thực sự muốn xóa các mục đã chọn?")) {
-            List<String> maspsToDelete = new ArrayList<>();
+        boolean hasChecked = false;
+        for (int i = 0; i < tblSanPham.getRowCount(); i++) {
+            if ((Boolean) tblSanPham.getValueAt(i, 6)) {
+                hasChecked = true;
+                break;
+            }
+        }
 
+        if (!hasChecked) {
+            XDialog.alert("Vui lòng chọn ít nhất một sản phẩm để xoá.");
+            return;
+        }
+
+        if (XDialog.confirm("Bạn thực sự muốn xóa các mục đã chọn?")) {
+            int deletedCount = 0;
             for (int i = 0; i < tblSanPham.getRowCount(); i++) {
-                Boolean isChecked = (Boolean) tblSanPham.getValueAt(i, 6);
-                if (Boolean.TRUE.equals(isChecked)) {
-                    maspsToDelete.add((String) tblSanPham.getValueAt(i, 0)); // Mã SP nằm cột 0
+                if ((Boolean) tblSanPham.getValueAt(i, 6)) {
+                    dao.deleteById(items.get(i).getMasp());
+                    deletedCount++;
                 }
             }
 
-            for (String masp : maspsToDelete) {
-                dao.deleteById(Integer.parseInt(masp));
-            }
-
-            // Cập nhật lại bảng
             int selectedRow = tblLoaiSanPham.getSelectedRow();
             if (selectedRow >= 0) {
                 String maloai = loaisanpham.get(selectedRow).getMaloai();
@@ -892,7 +912,7 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                 fillToTable();
             }
 
-            this.clear(); // reset form nếu cần
+            XDialog.alert("Đã xoá " + deletedCount + " sản phẩm được chọn.");
         }
     }
 
@@ -954,11 +974,12 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
             DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
             model.setRowCount(0);
 
-            items = dao.findByMaLoai(maloai); // DAO đã có sẵn hàm này
+            sanphams = dao.findByMaLoai(maloai); // Gán đúng vào danh sách dùng toàn cục
+
             int stt = 1;
-            for (SanPham item : items) {
+            for (SanPham item : sanphams) {
                 model.addRow(new Object[]{
-                    stt++, // STT bắt đầu từ 1
+                    stt++,
                     item.getTensp(),
                     item.getDvt(),
                     item.getNuocsx(),
@@ -967,8 +988,8 @@ public class SanPhamJFrame extends javax.swing.JFrame implements SanPhamControll
                     false
                 });
             }
+
             this.clear(); // reset form
-            // txtMasp.setText(generateMaSPTheoLoai(maloai));
         }
     }
 
